@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import ChatInput from "../components/ChatInput";
 import ChatArea from "./ChatArea";
+import { sendMessage } from "../services/chatService";
 
 function ChatPage() {
   const [messages, setMessages] = useState([
@@ -14,7 +15,7 @@ function ChatPage() {
 
   const [isTyping, setIsTyping] = useState(false);
 
-  const handleSend = (text) => {
+  const handleSend = async (text) => {
     const userMessage = {
       id: Date.now(),
       sender: "user",
@@ -25,16 +26,29 @@ function ChatPage() {
 
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const data = await sendMessage(text);
+
       const aiMessage = {
         id: Date.now() + 1,
         sender: "ai",
-        text: "I received your message: " + text,
+        text: data.reply,
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
+    } catch (error) {
+      console.error("Error:", error);
+
+      const errorMessage = {
+        id: Date.now() + 1,
+        sender: "ai",
+        text: "Something went wrong.",
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+
+    setIsTyping(false);
   };
 
   return (
@@ -53,3 +67,4 @@ function ChatPage() {
 
 export default ChatPage;
 
+   
