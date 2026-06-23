@@ -8,24 +8,32 @@ function ChatMessage({ message, sender }) {
 
   return (
     <div
-      className={`max-w-xl p-3 rounded-lg mb-3 ${
+      className={`flex mb-4 ${
         sender === "user"
-          ? "bg-blue-500 text-white ml-auto"
-          : "bg-gray-200 text-black"
+          ? "justify-end"
+          : "justify-start"
       }`}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {message}
-      </ReactMarkdown>
+      <div
+        className={`max-w-2xl p-4 rounded-2xl shadow ${
+          sender === "user"
+            ? "bg-blue-500 text-white"
+            : "bg-gray-200 text-black"
+        }`}
+      >
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {message}
+        </ReactMarkdown>
 
-      {sender === "ai" && (
-        <button
-          onClick={copyToClipboard}
-          className="mt-2 text-sm bg-gray-300 px-2 py-1 rounded"
-        >
-          📋 Copy
-        </button>
-      )}
+        {sender === "ai" && (
+          <button
+            onClick={copyToClipboard}
+            className="mt-3 text-sm bg-gray-300 px-2 py-1 rounded"
+          >
+            📋 Copy
+          </button>
+        )}
+      </div>
     </div>
   );
 }

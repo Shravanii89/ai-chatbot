@@ -21,12 +21,20 @@ function ChatPage() {
 
   const [isTyping, setIsTyping] = useState(false);
 
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
+
   useEffect(() => {
     localStorage.setItem(
       "messages",
       JSON.stringify(messages)
     );
   }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
 
   const clearChat = () => {
     const defaultMessage = [
@@ -78,8 +86,17 @@ function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
+    <div
+      className={`min-h-screen ${
+        darkMode
+          ? "bg-gray-900 text-white"
+          : "bg-gray-100 text-black"
+      }`}
+    >
+      <Navbar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+      />
 
       <div className="max-w-4xl mx-auto p-4">
         <button
