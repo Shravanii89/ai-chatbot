@@ -1,13 +1,8 @@
 const express = require("express");
-
 const router = express.Router();
 
-router.post("/chat", (req, res) => {
-  const { message } = req.body;
+const chatController = require("../controllers/chatController");
 
-  res.json({
-    reply: `Backend received: ${message}`,
-  });
-});
+router.post("/chat", chatController);
 
 module.exports = router;
