@@ -1,19 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import ChatInput from "../components/ChatInput";
 import ChatArea from "./ChatArea";
 import { sendMessage } from "../services/chatService";
 
 function ChatPage() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: "ai",
-      text: "Hello! How can I help you?",
-    },
-  ]);
+  const [messages, setMessages] = useState(() => {
+    const savedMessages = localStorage.getItem("messages");
+
+    return savedMessages
+      ? JSON.parse(savedMessages)
+      : [
+          {
+            id: 1,
+            sender: "ai",
+            text: "Hello! How can I help you?",
+          },
+        ];
+  });
 
   const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "messages",
+      JSON.stringify(messages)
+    );
+  }, [messages]);
+
+  const clearChat = () => {
+    const defaultMessage = [
+      {
+        id: 1,
+        sender: "ai",
+        text: "Hello! How can I help you?",
+      },
+    ];
+
+    setMessages(defaultMessage);
+    localStorage.removeItem("messages");
+  };
 
   const handleSend = async (text) => {
     const userMessage = {
@@ -54,6 +80,15 @@ function ChatPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
+
+      <div className="max-w-4xl mx-auto p-4">
+        <button
+          onClick={clearChat}
+          className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+        >
+          🗑️ Clear Chat
+        </button>
+      </div>
 
       <ChatArea
         messages={messages}
