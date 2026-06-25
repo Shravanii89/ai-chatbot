@@ -129,6 +129,31 @@ function ChatPage() {
     }));
   };
 
+  const exportChat = () => {
+    const chatText = messages
+      .map(
+        (msg) =>
+          `${msg.sender.toUpperCase()}: ${msg.text}`
+      )
+      .join("\n\n");
+
+    const blob = new Blob([chatText], {
+      type: "text/plain",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "chat-history.txt";
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleSend = async (text) => {
     const userMessage = {
       id: Date.now(),
@@ -271,12 +296,19 @@ function ChatPage() {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-4xl mx-auto p-4 flex gap-3 flex-wrap">
           <button
             onClick={clearChat}
-            className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+            className="bg-red-500 text-white px-4 py-2 rounded"
           >
             🗑️ Clear Chat
+          </button>
+
+          <button
+            onClick={exportChat}
+            className="bg-green-600 text-white px-4 py-2 rounded"
+          >
+            📄 Export Chat
           </button>
         </div>
 
