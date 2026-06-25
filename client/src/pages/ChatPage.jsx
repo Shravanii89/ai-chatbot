@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import ChatInput from "../components/ChatInput";
 import ChatArea from "./ChatArea";
 import { sendMessage } from "../services/chatService";
@@ -25,6 +26,15 @@ function ChatPage() {
     return localStorage.getItem("darkMode") === "true";
   });
 
+  const [chats, setChats] = useState([
+    {
+      id: 1,
+      title: "New Chat",
+    },
+  ]);
+
+  const [currentChat, setCurrentChat] = useState(1);
+
   useEffect(() => {
     localStorage.setItem(
       "messages",
@@ -47,6 +57,20 @@ function ChatPage() {
 
     setMessages(defaultMessage);
     localStorage.removeItem("messages");
+  };
+
+  const createNewChat = () => {
+    const newChat = {
+      id: Date.now(),
+      title: `Chat ${chats.length + 1}`,
+    };
+
+    setChats((prev) => [...prev, newChat]);
+    setCurrentChat(newChat.id);
+  };
+
+  const selectChat = (id) => {
+    setCurrentChat(id);
   };
 
   const handleSend = async (text) => {
@@ -87,32 +111,41 @@ function ChatPage() {
 
   return (
     <div
-      className={`min-h-screen ${
+      className={`flex ${
         darkMode
           ? "bg-gray-900 text-white"
           : "bg-gray-100 text-black"
       }`}
     >
-      <Navbar
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
+      <Sidebar
+        chats={chats}
+        currentChat={currentChat}
+        onNewChat={createNewChat}
+        onSelectChat={selectChat}
       />
 
-      <div className="max-w-4xl mx-auto p-4">
-        <button
-          onClick={clearChat}
-          className="bg-red-500 text-white px-4 py-2 rounded mb-4"
-        >
-          🗑️ Clear Chat
-        </button>
+      <div className="flex-1 min-h-screen">
+        <Navbar
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
+
+        <div className="max-w-4xl mx-auto p-4">
+          <button
+            onClick={clearChat}
+            className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+          >
+            🗑️ Clear Chat
+          </button>
+        </div>
+
+        <ChatArea
+          messages={messages}
+          isTyping={isTyping}
+        />
+
+        <ChatInput onSend={handleSend} />
       </div>
-
-      <ChatArea
-        messages={messages}
-        isTyping={isTyping}
-      />
-
-      <ChatInput onSend={handleSend} />
     </div>
   );
 }
