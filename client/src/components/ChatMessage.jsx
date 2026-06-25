@@ -10,24 +10,30 @@ function ChatMessage({ message, sender }) {
 
   return (
     <div
-      className={`flex mb-4 ${
+      className={`flex mb-6 ${
         sender === "user"
           ? "justify-end"
           : "justify-start"
       }`}
     >
       <div
-        className={`max-w-2xl p-4 rounded-2xl shadow ${
+        className={`max-w-3xl p-5 rounded-3xl shadow-lg ${
           sender === "user"
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-black"
+            ? "bg-gradient-to-r from-amber-300 to-amber-200 text-black"
+            : "bg-slate-800 text-white border border-slate-700"
         }`}
       >
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            code({ inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
+            code({
+              inline,
+              className,
+              children,
+              ...props
+            }) {
+              const match =
+                /language-(\w+)/.exec(className || "");
 
               return !inline && match ? (
                 <SyntaxHighlighter
@@ -39,9 +45,7 @@ function ChatMessage({ message, sender }) {
                   {String(children).replace(/\n$/, "")}
                 </SyntaxHighlighter>
               ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
+                <code {...props}>{children}</code>
               );
             },
           }}
@@ -52,7 +56,7 @@ function ChatMessage({ message, sender }) {
         {sender === "ai" && (
           <button
             onClick={copyToClipboard}
-            className="mt-3 text-sm bg-gray-300 px-2 py-1 rounded"
+            className="mt-4 bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-sm"
           >
             📋 Copy
           </button>
