@@ -1,8 +1,22 @@
-const express = require("express");
-const router = express.Router();
+const generateResponse = require("../services/geminiService");
 
-const chatController = require("../controllers/chatController");
+const chatController = async (req, res) => {
+  console.log("CHAT CONTROLLER HIT");
 
-router.post("/chat", chatController);
+  try {
+    const { message } = req.body;
+    console.log("MESSAGE:", message);
 
-module.exports = router;
+    const reply = await generateResponse(message);
+
+    res.json({ reply });
+  } catch (error) {
+    console.error("ERROR:", error);
+
+    res.status(500).json({
+      reply: "Something went wrong.",
+    });
+  }
+};
+
+module.exports = chatController;

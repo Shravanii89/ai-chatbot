@@ -5,12 +5,23 @@ const ai = new GoogleGenAI({
 });
 
 const generateResponse = async (message) => {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: message,
-  });
+  console.log("generateResponse called");
 
-  return response.text;
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: message,
+    });
+
+    console.log("SUCCESS");
+    return response.text;
+  } catch (error) {
+    console.log("GEMINI ERROR START");
+    console.log(error);
+    console.log("GEMINI ERROR END");
+
+    throw error;
+  }
 };
 
 module.exports = generateResponse;
