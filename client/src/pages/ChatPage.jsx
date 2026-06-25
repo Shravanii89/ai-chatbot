@@ -112,6 +112,23 @@ function ChatPage() {
       text,
     };
 
+    // Auto title chat from first user message
+    if (
+      messages.length === 1 &&
+      messages[0].sender === "ai"
+    ) {
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === currentChat
+            ? {
+                ...chat,
+                title: text.slice(0, 25),
+              }
+            : chat
+        )
+      );
+    }
+
     setAllChats((prev) => ({
       ...prev,
       [currentChat]: [

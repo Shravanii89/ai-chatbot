@@ -1,4 +1,9 @@
-function Sidebar({ chats, currentChat, onNewChat, onSelectChat }) {
+function Sidebar({
+  chats,
+  currentChat,
+  onNewChat,
+  onSelectChat,
+}) {
   return (
     <div className="w-64 bg-slate-900 text-white h-screen p-4">
       <button
@@ -13,7 +18,7 @@ function Sidebar({ chats, currentChat, onNewChat, onSelectChat }) {
           <div
             key={chat.id}
             onClick={() => onSelectChat(chat.id)}
-            className={`p-2 rounded cursor-pointer ${
+            className={`p-2 rounded cursor-pointer truncate ${
               currentChat === chat.id
                 ? "bg-slate-700"
                 : "bg-slate-800"
