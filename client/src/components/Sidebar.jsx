@@ -1,10 +1,25 @@
+import { useState } from "react";
+
 function Sidebar({
   chats,
   currentChat,
   onNewChat,
   onSelectChat,
   onDeleteChat,
+  onRenameChat,
 }) {
+  const [editingId, setEditingId] = useState(null);
+  const [newTitle, setNewTitle] = useState("");
+
+  const handleRename = (id) => {
+    if (newTitle.trim()) {
+      onRenameChat(id, newTitle);
+    }
+
+    setEditingId(null);
+    setNewTitle("");
+  };
+
   return (
     <div className="w-64 bg-slate-900 text-white h-screen p-4">
       <button
@@ -18,22 +33,43 @@ function Sidebar({
         {chats.map((chat) => (
           <div
             key={chat.id}
-            className={`flex justify-between items-center p-2 rounded ${
+            className={`flex items-center justify-between p-2 rounded ${
               currentChat === chat.id
                 ? "bg-slate-700"
                 : "bg-slate-800"
             }`}
           >
-            <span
-              onClick={() => onSelectChat(chat.id)}
-              className="cursor-pointer truncate flex-1"
-            >
-              {chat.title}
-            </span>
+            {editingId === chat.id ? (
+              <input
+                value={newTitle}
+                onChange={(e) =>
+                  setNewTitle(e.target.value)
+                }
+                onBlur={() => handleRename(chat.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleRename(chat.id);
+                  }
+                }}
+                autoFocus
+                className="text-black px-1 rounded w-full"
+              />
+            ) : (
+              <span
+                onClick={() => onSelectChat(chat.id)}
+                onDoubleClick={() => {
+                  setEditingId(chat.id);
+                  setNewTitle(chat.title);
+                }}
+                className="cursor-pointer truncate flex-1"
+              >
+                {chat.title}
+              </span>
+            )}
 
             <button
               onClick={() => onDeleteChat(chat.id)}
-              className="ml-2 text-red-400 hover:text-red-600"
+              className="ml-2 text-red-400"
             >
               🗑️
             </button>

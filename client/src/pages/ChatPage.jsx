@@ -205,12 +205,21 @@ function ChatPage() {
       }`}
     >
       <Sidebar
-        chats={chats}
-        currentChat={currentChat}
-        onNewChat={createNewChat}
-        onSelectChat={selectChat}
-        onDeleteChat={deleteChat}
-      />
+  chats={chats}
+  currentChat={currentChat}
+  onNewChat={createNewChat}
+  onSelectChat={selectChat}
+  onDeleteChat={deleteChat}
+  onRenameChat={(id, title) => {
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat.id === id
+          ? { ...chat, title }
+          : chat
+      )
+    );
+  }}
+/>
 
       <div className="flex-1 min-h-screen">
         <Navbar
