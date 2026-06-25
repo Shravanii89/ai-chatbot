@@ -6,19 +6,39 @@ import ChatArea from "./ChatArea";
 import { sendMessage } from "../services/chatService";
 
 function ChatPage() {
-  const [messages, setMessages] = useState(() => {
-    const savedMessages = localStorage.getItem("messages");
+  const [chats, setChats] = useState(() => {
+    const savedChats = localStorage.getItem("chats");
 
-    return savedMessages
-      ? JSON.parse(savedMessages)
+    return savedChats
+      ? JSON.parse(savedChats)
       : [
           {
             id: 1,
-            sender: "ai",
-            text: "Hello! How can I help you?",
+            title: "Chat 1",
           },
         ];
   });
+
+  const [currentChat, setCurrentChat] = useState(1);
+
+  const [allChats, setAllChats] = useState(() => {
+    const savedAllChats =
+      localStorage.getItem("allChats");
+
+    return savedAllChats
+      ? JSON.parse(savedAllChats)
+      : {
+          1: [
+            {
+              id: 1,
+              sender: "ai",
+              text: "Hello! How can I help you?",
+            },
+          ],
+        };
+  });
+
+  const messages = allChats[currentChat] || [];
 
   const [isTyping, setIsTyping] = useState(false);
 
@@ -26,51 +46,63 @@ function ChatPage() {
     return localStorage.getItem("darkMode") === "true";
   });
 
-  const [chats, setChats] = useState([
-    {
-      id: 1,
-      title: "New Chat",
-    },
-  ]);
-
-  const [currentChat, setCurrentChat] = useState(1);
+  useEffect(() => {
+    localStorage.setItem(
+      "allChats",
+      JSON.stringify(allChats)
+    );
+  }, [allChats]);
 
   useEffect(() => {
     localStorage.setItem(
-      "messages",
-      JSON.stringify(messages)
+      "chats",
+      JSON.stringify(chats)
     );
-  }, [messages]);
+  }, [chats]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
-  const clearChat = () => {
-    const defaultMessage = [
-      {
-        id: 1,
-        sender: "ai",
-        text: "Hello! How can I help you?",
-      },
-    ];
-
-    setMessages(defaultMessage);
-    localStorage.removeItem("messages");
-  };
-
   const createNewChat = () => {
+    const newId = Date.now();
+
     const newChat = {
-      id: Date.now(),
+      id: newId,
       title: `Chat ${chats.length + 1}`,
     };
 
     setChats((prev) => [...prev, newChat]);
-    setCurrentChat(newChat.id);
+
+    setAllChats((prev) => ({
+      ...prev,
+      [newId]: [
+        {
+          id: 1,
+          sender: "ai",
+          text: "Hello! How can I help you?",
+        },
+      ],
+    }));
+
+    setCurrentChat(newId);
   };
 
   const selectChat = (id) => {
     setCurrentChat(id);
+  };
+
+  const clearChat = () => {
+    setAllChats((prev) => ({
+      ...prev,
+      [currentChat]: [
+        {
+          id: 1,
+          sender: "ai",
+          text: "Hello! How can I help you?",
+        },
+      ],
+    }));
   };
 
   const handleSend = async (text) => {
@@ -80,7 +112,13 @@ function ChatPage() {
       text,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setAllChats((prev) => ({
+      ...prev,
+      [currentChat]: [
+        ...(prev[currentChat] || []),
+        userMessage,
+      ],
+    }));
 
     setIsTyping(true);
 
@@ -93,9 +131,15 @@ function ChatPage() {
         text: data.reply,
       };
 
-      setMessages((prev) => [...prev, aiMessage]);
+      setAllChats((prev) => ({
+        ...prev,
+        [currentChat]: [
+          ...(prev[currentChat] || []),
+          aiMessage,
+        ],
+      }));
     } catch (error) {
-      console.error("Error:", error);
+      console.error(error);
 
       const errorMessage = {
         id: Date.now() + 1,
@@ -103,7 +147,13 @@ function ChatPage() {
         text: "Something went wrong.",
       };
 
-      setMessages((prev) => [...prev, errorMessage]);
+      setAllChats((prev) => ({
+        ...prev,
+        [currentChat]: [
+          ...(prev[currentChat] || []),
+          errorMessage,
+        ],
+      }));
     }
 
     setIsTyping(false);
