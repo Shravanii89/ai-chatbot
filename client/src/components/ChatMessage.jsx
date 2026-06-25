@@ -2,6 +2,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { motion } from "framer-motion";
 
 function ChatMessage({ message, sender }) {
   const copyToClipboard = () => {
@@ -9,7 +10,18 @@ function ChatMessage({ message, sender }) {
   };
 
   return (
-    <div
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        duration: 0.3,
+      }}
       className={`flex mb-6 ${
         sender === "user"
           ? "justify-end"
@@ -56,13 +68,13 @@ function ChatMessage({ message, sender }) {
         {sender === "ai" && (
           <button
             onClick={copyToClipboard}
-            className="mt-4 bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-sm"
+            className="mt-4 bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-lg text-sm transition"
           >
             📋 Copy
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
