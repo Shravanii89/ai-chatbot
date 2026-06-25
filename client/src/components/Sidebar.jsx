@@ -3,6 +3,7 @@ function Sidebar({
   currentChat,
   onNewChat,
   onSelectChat,
+  onDeleteChat,
 }) {
   return (
     <div className="w-64 bg-slate-900 text-white h-screen p-4">
@@ -17,14 +18,25 @@ function Sidebar({
         {chats.map((chat) => (
           <div
             key={chat.id}
-            onClick={() => onSelectChat(chat.id)}
-            className={`p-2 rounded cursor-pointer truncate ${
+            className={`flex justify-between items-center p-2 rounded ${
               currentChat === chat.id
                 ? "bg-slate-700"
                 : "bg-slate-800"
             }`}
           >
-            {chat.title}
+            <span
+              onClick={() => onSelectChat(chat.id)}
+              className="cursor-pointer truncate flex-1"
+            >
+              {chat.title}
+            </span>
+
+            <button
+              onClick={() => onDeleteChat(chat.id)}
+              className="ml-2 text-red-400 hover:text-red-600"
+            >
+              🗑️
+            </button>
           </div>
         ))}
       </div>

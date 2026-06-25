@@ -92,6 +92,27 @@ function ChatPage() {
     setCurrentChat(id);
   };
 
+  const deleteChat = (id) => {
+    if (chats.length === 1) {
+      alert("At least one chat must remain.");
+      return;
+    }
+
+    const updatedChats = chats.filter(
+      (chat) => chat.id !== id
+    );
+
+    setChats(updatedChats);
+
+    const updatedAllChats = { ...allChats };
+    delete updatedAllChats[id];
+    setAllChats(updatedAllChats);
+
+    if (currentChat === id) {
+      setCurrentChat(updatedChats[0].id);
+    }
+  };
+
   const clearChat = () => {
     setAllChats((prev) => ({
       ...prev,
@@ -112,7 +133,6 @@ function ChatPage() {
       text,
     };
 
-    // Auto title chat from first user message
     if (
       messages.length === 1 &&
       messages[0].sender === "ai"
@@ -189,6 +209,7 @@ function ChatPage() {
         currentChat={currentChat}
         onNewChat={createNewChat}
         onSelectChat={selectChat}
+        onDeleteChat={deleteChat}
       />
 
       <div className="flex-1 min-h-screen">
